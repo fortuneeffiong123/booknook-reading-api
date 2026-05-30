@@ -1,0 +1,37 @@
+name: Deploy BookNook API to Azure App Service
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AZURE_WEBAPP_NAME: ${{ secrets.AZURE_WEBAPP_NAME }}
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  NODE_VERSION: '18.x'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Prepare app
+        run: echo "No build step required"
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
